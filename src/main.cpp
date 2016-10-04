@@ -36,8 +36,13 @@ void loop()
   Serial.println("");
 
   Serial.println("======= SELF TEST =======");
-  uint8_t x, y, z;
-  mpu6050.isGyroSelfTestEnabled(&x, &y, &z);
+  uint8_t x, y, z, range;
+  // mpu6050.setGyroSelfTestEnabled(true);
+  mpu6050.getGyroSelfTestEnabled(&x, &y, &z, &range);
+  Serial.println(x, HEX);
+  Serial.println(y, HEX);
+  Serial.println(z, HEX);
+  Serial.println(range, HEX);
 
   delay(5000);
 }

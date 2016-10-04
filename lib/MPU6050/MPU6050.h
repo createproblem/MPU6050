@@ -78,7 +78,7 @@ public:
   void setFullScaleGyroRange(uint8_t range);
   uint8_t getFullScaleGyroRange();
   void setGyroSelfTestEnabled(bool enabled);
-  void isGyroSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z);
+  uint8_t getGyroSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r);
 
   // Accel config
   void setFullScaleAccelRange(uint8_t range);
