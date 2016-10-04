@@ -19,7 +19,7 @@ void setup()
 
 void loop()
 {
-  Serial.println("======= CONFIG ======");
+  Serial.println("======= CONFIG =======");
 
   Serial.print("Device ID: 0x");
   Serial.println(mpu6050.getDeviceID(), HEX);
@@ -34,5 +34,10 @@ void loop()
   Serial.println(MPU6050::accelRangeToString(mpu6050.getFullScaleAccelRange()));
   Serial.println("");
   Serial.println("");
+
+  Serial.println("======= SELF TEST =======");
+  uint8_t x, y, z;
+  mpu6050.isGyroSelfTestEnabled(&x, &y, &z);
+
   delay(5000);
 }

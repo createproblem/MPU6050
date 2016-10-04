@@ -46,6 +46,33 @@ uint8_t MPU6050::getFullScaleGyroRange()
   return buffer[0];
 }
 
+/**
+ * Enable gyro self test.
+ * Gyro scale untouched!
+ *
+ * Self test for x, y, z are the last 3 bits (5-7)
+ *
+ * Enabled: 0xE0 (1110 0000)
+ * Disabled: 0x00 (0000 0000)
+ *
+ * @param enabled Trun self test on or off
+ */
+void MPU6050::setGyroSelfTestEnabled(bool enabled)
+{
+  uint8_t data = enabled ? 0xE0 : 0x00;
+
+  I2Cdev::writeBits(_devAddr, MPU6050_RA_GYRO_CONFIG, 5, 3, data);
+}
+
+void MPU6050::isGyroSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z)
+{
+  uint8_t buffer[8];
+
+  I2Cdev::readByte(_devAddr, MPU6050_RA_GYRO_CONFIG, buffer);
+
+  Serial.print(buffer[4], BIN);
+}
+
 void MPU6050::setFullScaleAccelRange(uint8_t range)
 {
   I2Cdev::writeBits(_devAddr, MPU6050_RA_ACCEL_CONFIG, MPU6050_ACONFIG_AFS_SEL_BIT, MPU6050_ACONFIG_AFS_SEL_LENGTH, range);
