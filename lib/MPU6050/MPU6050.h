@@ -4,6 +4,10 @@
 #define MPU6050_DEFAULT_ADDRESS     0x68
 #define MPU6050_DEFAULT_DEVICE_ID   0x34
 
+#define MPU6050_RA_SELF_TEST_X      0x0D  //[7:5] XA_TEST[4-2], [4:0] XG_TEST[4-0]
+#define MPU6050_RA_SELF_TEST_Y      0x0E  //[7:5] YA_TEST[4-2], [4:0] YG_TEST[4-0]
+#define MPU6050_RA_SELF_TEST_Z      0x0F  //[7:5] ZA_TEST[4-2], [4:0] ZG_TEST[4-0]
+#define MPU6050_RA_SELF_TEST_A      0x10  //[5:4] XA_TEST[1-0], [3:2] YA_TEST[1-0], [1:0] ZA_TEST[1-0]
 #define MPU6050_RA_GYRO_CONFIG      0x1B
 #define MPU6050_RA_ACCEL_CONFIG     0x1C
 #define MPU6050_RA_PWR_MGMT_1       0x6B
@@ -83,6 +87,10 @@ public:
   // Accel config
   void setFullScaleAccelRange(uint8_t range);
   uint8_t getFullScaleAccelRange();
+  void setAccelSelfTestEnabled(bool enabled);
+  uint8_t getAccelSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r);
+
+  void getSelfTestFactoryTrim();
 
 private:
   uint8_t _devAddr;

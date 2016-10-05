@@ -6,7 +6,7 @@ MPU6050::MPU6050() : _devAddr(MPU6050_DEFAULT_ADDRESS)
 void MPU6050::initialize()
 {
   setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
-  setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
+  setFullScaleAccelRange(MPU6050_ACCEL_FS_16);
   setSleepEnabled(false);
 }
 
@@ -60,7 +60,6 @@ uint8_t MPU6050::getFullScaleGyroRange()
 void MPU6050::setGyroSelfTestEnabled(bool enabled)
 {
   uint8_t data = enabled ? 0x07 : 0x00;
-
   I2Cdev::writeBits(_devAddr, MPU6050_RA_GYRO_CONFIG, 7, 3, data);
 }
 
@@ -68,7 +67,8 @@ uint8_t MPU6050::getGyroSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint
 {
   uint8_t buffer[1], count;
 
-  if ((count = I2Cdev::readByte(_devAddr, MPU6050_RA_GYRO_CONFIG, buffer)) != 0) {
+  if ((count = I2Cdev::readByte(_devAddr, MPU6050_RA_GYRO_CONFIG, buffer)) != 0)
+  {
     *x = (buffer[0] & 0x80) >> 7; // mask 1000 0000
     *y = (buffer[0] & 0x40) >> 6; // mask 0100 0000
     *z = (buffer[0] & 0x20) >> 5; // mask 0010 0000
@@ -88,4 +88,25 @@ uint8_t MPU6050::getFullScaleAccelRange()
   uint8_t buffer;
   I2Cdev::readBits(_devAddr, MPU6050_RA_ACCEL_CONFIG, MPU6050_ACONFIG_AFS_SEL_BIT, MPU6050_ACONFIG_AFS_SEL_LENGTH, &buffer);
   return buffer;
+}
+
+void MPU6050::setAccelSelfTestEnabled(bool enabled)
+{
+  uint8_t data = enabled ? 0x07 : 0x00;
+  I2Cdev::writeBits(_devAddr, MPU6050_RA_ACCEL_CONFIG, 7, 3, data);
+}
+
+uint8_t MPU6050::getAccelSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r)
+{
+  uint8_t buffer[1], count;
+
+  if ((count = I2Cdev::readByte(_devAddr, MPU6050_RA_ACCEL_CONFIG, buffer)) != 0)
+  {
+    *x = (buffer[0] & 0x80) >> 7; // mask 1000 0000
+    *y = (buffer[0] & 0x40) >> 6; // mask 0100 0000
+    *z = (buffer[0] & 0x20) >> 5; // mask 0010 0000
+    *r = (buffer[0] & 0x18) >> 3; // mask 0001 1000
+  }
+
+  return count;
 }
