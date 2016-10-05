@@ -39,38 +39,6 @@
 class MPU6050
 {
 public:
-  static String gyroRangeToString(uint8_t range)
-  {
-    String grange = "unknown";
-
-    if (range == MPU6050_GYRO_FS_250)
-        grange = "250";
-    if (range == MPU6050_GYRO_FS_500)
-      grange = "500";
-    if (range == MPU6050_GYRO_FS_1000)
-      grange = "1000";
-    if (range == MPU6050_GYRO_FS_2000)
-      grange = "2000";
-
-    return grange;
-  }
-
-  static String accelRangeToString(uint8_t range)
-  {
-    String arange = "unknown";
-
-    if (range == MPU6050_ACCEL_FS_2)
-        arange = "2";
-    if (range == MPU6050_ACCEL_FS_4)
-      arange = "4";
-    if (range == MPU6050_ACCEL_FS_8)
-      arange = "8";
-    if (range == MPU6050_ACCEL_FS_16)
-      arange = "16";
-
-    return arange;
-  }
-
   MPU6050();
   void initialize();
   bool isConnected();
@@ -82,12 +50,14 @@ public:
   void setFullScaleGyroRange(uint8_t range);
   uint8_t getFullScaleGyroRange();
   void setGyroSelfTestEnabled(bool enabled);
+  void setGyroSelfTestEnabled();
   uint8_t getGyroSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r);
 
   // Accel config
   void setFullScaleAccelRange(uint8_t range);
   uint8_t getFullScaleAccelRange();
   void setAccelSelfTestEnabled(bool enabled);
+  void setAccelSelfTestEnabled();
   uint8_t getAccelSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r);
 
   void getSelfTestFactoryTrim(float *destination);

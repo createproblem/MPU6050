@@ -2,6 +2,7 @@
 #include <MPU6050.h>
 
 MPU6050 mpu6050;
+void runSelfTest();
 
 void setup()
 {
@@ -14,7 +15,9 @@ void setup()
 
   Serial.print("Connection to MPU6050: ");
   mpu6050.isConnected() ? Serial.println("OK") : Serial.println("FAILED");
-  mpu6050.initialize();
+  mpu6050.setSleepEnabled(false);
+  runSelfTest();
+  // mpu6050.initialize();
 }
 
 void loop()
@@ -28,19 +31,25 @@ void loop()
   mpu6050.isSleepEnabled() ? Serial.println("YES") : Serial.println("NO");
 
   Serial.print("Gyro range: ");
-  Serial.println(MPU6050::gyroRangeToString(mpu6050.getFullScaleGyroRange()));
+  Serial.print("0x0"); Serial.println(mpu6050.getFullScaleGyroRange(), HEX);
 
   Serial.print("Accel range: ");
-  Serial.println(MPU6050::accelRangeToString(mpu6050.getFullScaleAccelRange()));
+  Serial.print("0x0"); Serial.println(mpu6050.getFullScaleAccelRange(), HEX);
   Serial.println("");
 
-  Serial.println("======= SELF TEST (pass +/- 14) =======");
-  mpu6050.setGyroSelfTestEnabled(true);
-  mpu6050.setAccelSelfTestEnabled(true);
+  delay(5000);
+}
+
+void runSelfTest()
+{
+  mpu6050.setAccelSelfTestEnabled();
+  delay(250);
+  mpu6050.setGyroSelfTestEnabled();
   delay(250);
 
   float selfTest[6];
   mpu6050.getSelfTestFactoryTrim(selfTest);
+
   Serial.print("x-axis self test: acceleration trim within : "); Serial.print(selfTest[0],1); Serial.println("% of factory value");
   Serial.print("y-axis self test: acceleration trim within : "); Serial.print(selfTest[1],1); Serial.println("% of factory value");
   Serial.print("z-axis self test: acceleration trim within : "); Serial.print(selfTest[2],1); Serial.println("% of factory value");
@@ -52,6 +61,4 @@ void loop()
     Serial.println("Self test: PASS");
   else
     Serial.println("Self test: FAILED");
-    
-  delay(5000);
 }

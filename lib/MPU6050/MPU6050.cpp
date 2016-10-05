@@ -63,6 +63,11 @@ void MPU6050::setGyroSelfTestEnabled(bool enabled)
   I2Cdev::writeBits(_devAddr, MPU6050_RA_GYRO_CONFIG, 7, 3, data);
 }
 
+void MPU6050::setGyroSelfTestEnabled()
+{
+  I2Cdev::writeByte(_devAddr, MPU6050_RA_GYRO_CONFIG, 0xE0); // Enable self test on all three axes and set gyro range to +/- 250 degrees/s
+}
+
 uint8_t MPU6050::getGyroSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r)
 {
   uint8_t buffer[1], count;
@@ -94,6 +99,11 @@ void MPU6050::setAccelSelfTestEnabled(bool enabled)
 {
   uint8_t data = enabled ? 0x07 : 0x00;
   I2Cdev::writeBits(_devAddr, MPU6050_RA_ACCEL_CONFIG, 7, 3, data);
+}
+
+void MPU6050::setAccelSelfTestEnabled()
+{
+  I2Cdev::writeByte(_devAddr, MPU6050_RA_ACCEL_CONFIG, 0xF0); // Enable self test on all three axes and set accelerometer range to +/- 8 g
 }
 
 uint8_t MPU6050::getAccelSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r)
@@ -131,9 +141,9 @@ void MPU6050::getSelfTestFactoryTrim(float *destination)
   rawData[3] = buffer[0];
 
   // Extract the acceleration test results first
-  selfTest[0] = (rawData[0] >> 3) | (rawData[3] & 0x30) >> 4; // XA_TEST(5bit) Combine LSB SELF_TEST_X with MSB SELF_TEST_A (mask 0011 0000)
-  selfTest[1] = (rawData[1] >> 3) | (rawData[3] & 0x0C) >> 4; // YA_TEST(5bit) Combine LSB SELF_TEST_Y with MSB SELF_TEST_A (mask 0000 1100)
-  selfTest[2] = (rawData[2] >> 3) | (rawData[3] & 0x03) >> 4; // ZA_TEST(5bit) Combine LSB SELF_TEST_Z with MSB SELF_TEST_A (mask 0000 0011)
+  selfTest[0] = (rawData[0] >> 3) | (rawData[3] & 0x30) >> 4; // XA_TEST(5bit) Combine MSB SELF_TEST_X with LSB SELF_TEST_A (mask 0011 0000)
+  selfTest[1] = (rawData[1] >> 3) | (rawData[3] & 0x0C) >> 4; // YA_TEST(5bit) Combine MSB SELF_TEST_Y with LSB SELF_TEST_A (mask 0000 1100)
+  selfTest[2] = (rawData[2] >> 3) | (rawData[3] & 0x03) >> 4; // ZA_TEST(5bit) Combine MSB SELF_TEST_Z with LSB SELF_TEST_A (mask 0000 0011)
 
   // Extract the gyration test results first
   selfTest[3] = rawData[0] & 0x1F; // XG_TEST(5bit) mask 0001 1111
@@ -146,7 +156,7 @@ void MPU6050::getSelfTestFactoryTrim(float *destination)
   factoryTrim[2] = (4096.0 * 0.34) * (pow((0.92 / 0.34), (((float)selfTest[2] - 1.0) / 30.0))); // FT[Za] factory trim calculation
   factoryTrim[3] = (25.0 * 131.0) * (pow(1.046, ((float)selfTest[3] - 1.0))); // FT[Xg] factory trim calculation
   factoryTrim[4] = (-25.0 * 131.0) * (pow(1.046, ((float)selfTest[4] - 1.0))); // FT[Yg] factory trim calculation
-  factoryTrim[5] = (25.0 * 131.0) * (pow(1.046, ((float)selfTest[5] - 1.0))); // FT[Yg] factory trim calculation
+  factoryTrim[5] = (25.0 * 131.0) * (pow(1.046, ((float)selfTest[5] - 1.0))); // FT[Zg] factory trim calculation
 
   for (int i = 0; i < 6; i++)
   {
