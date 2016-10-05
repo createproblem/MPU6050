@@ -90,7 +90,7 @@ public:
   void setAccelSelfTestEnabled(bool enabled);
   uint8_t getAccelSelfTestEnabled(uint8_t *x, uint8_t *y, uint8_t *z, uint8_t *r);
 
-  void getSelfTestFactoryTrim();
+  void getSelfTestFactoryTrim(float *destination);
 
 private:
   uint8_t _devAddr;
